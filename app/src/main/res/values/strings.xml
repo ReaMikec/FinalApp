@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Fitness</string>
+    <string name="hello">Hello</string>
+    <string name="permissions_denied_message">Permission Denied</string>
+    <string name="settings">Settings</string>
+    <string name="average_steps_week">Dnevni prosjek u posljednih 7 dana: %d</string>
+    <string name="average_steps_month">Dnevni prosjek u posljednih 30 dana: %d</string>
+</resources>
