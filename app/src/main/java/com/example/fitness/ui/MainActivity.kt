@@ -23,34 +23,26 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 
 
-// Osnovna aktivnost koja upravlja korisničkim sučeljem aplikacije i integracijom s Google Fit servisom.
 class MainActivity : AppCompatActivity() {
-    // Konstanta koja predstavlja kod zahtjeva za dopuštenjima vezanim uz Google Fit.
     private val GOOGLE_FIT_PERMISSIONS_REQUEST_CODE = 1
 
-    // Referenca na navigacijsku traku.
+    // Referenca na navigacijsku traku
     private lateinit var bottomNavigationView: BottomNavigationView
 
-    // Opcije potrebne za Google Fit servis koje određuju koje podatke aplikacija želi pristupiti.
-    // (aplikacija ne korsiti sva)
     private val fitnessOptions = FitnessOptions.builder()
         .addDataType(DataType.TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
         .addDataType(DataType.AGGREGATE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
-        .addDataType(DataType.TYPE_CALORIES_EXPENDED, FitnessOptions.ACCESS_READ)
-        .addDataType(DataType.AGGREGATE_CALORIES_EXPENDED, FitnessOptions.ACCESS_READ)
-        .addDataType(DataType.TYPE_DISTANCE_DELTA, FitnessOptions.ACCESS_READ)
-        .addDataType(DataType.AGGREGATE_DISTANCE_DELTA, FitnessOptions.ACCESS_READ)
         .build()
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        // Provjerava dopuštenja i pokreće odgovarajuće metode pri stvaranju aktivnosti.
+        // Provjerava dopuštenja i pokreće odgovarajuće metode pri stvaranju aktivnosti
         checkPermissionsAndRun(GOOGLE_FIT_PERMISSIONS_REQUEST_CODE)
     }
 
-    // Postavljanje kontroler navigacije za donju navigacijsku traku.
+    // Postavljanje kontroler navigacije za donju navigacijsku traku
     private fun loadNav_controller() {
         bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
         val navController = findNavController(R.id.nav_controller)
@@ -64,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         bottomNavigationView.setupWithNavController(navController)
     }
 
-    // Provjera potrebnih dopuštenja, ako postoje, pokreće se Google Fit prijava.
+    // Provjera potrebnih dopuštenja, ako postoje, pokreće se Google Fit prijava
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun checkPermissionsAndRun(fitActionRequestCode: Int) {
         if (permissionApproved()) {
@@ -74,7 +66,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Postavljanje zahtjev za Google Fit dopuštenjima.
+    // Postavljanje zahtjev za Google Fit dopuštenjima
     private fun requestPermissions() {
         GoogleSignIn.requestPermissions(
             this, // your activity
@@ -83,29 +75,20 @@ class MainActivity : AppCompatActivity() {
             fitnessOptions
         )
     }
-    // Prijava na Google Fit servis.
+    // Prijava na Google Fit servis
     private fun fitSignIn(requestCode: Int) {
         if (!GoogleSignIn.hasPermissions(getGoogleAccount(), fitnessOptions)) {
             requestPermissions()
         } else {
             loadNav_controller()
             subscribeToSteps()
-            subscribeToCalories()
         }
     }
 
-    // Dohvaća Google račun korisnika vezan uz Google Fit.
+    // Dohvaća Google račun korisnika vezan uz Google Fit
     private fun getGoogleAccount() = GoogleSignIn.getAccountForExtension(this, fitnessOptions)
 
-    // Dohvaća ime povezanog Google računa.
-    // Ovo ne radi s google fit-om
-    fun getAccountDisplayName(): String? {
-        val account = GoogleSignIn.getLastSignedInAccount(this)
-        Log.d("MainActivity", "Account: $account")
-        return account?.displayName
-    }
-
-    // Provjerava jesu li odobrena sva potrebna dopuštenja za aplikaciju.
+    // Provjerava jesu li odobrena sva potrebna dopuštenja za aplikaciju
     private fun permissionApproved(): Boolean {
         val locationPermission =
             PackageManager.PERMISSION_GRANTED == ActivityCompat.checkSelfPermission(
@@ -119,13 +102,13 @@ class MainActivity : AppCompatActivity() {
                 Manifest.permission.ACTIVITY_RECOGNITION
             )
         } else {
-            true // Za Android verzije manje od Q, ovo dopuštenje nije potrebno
+            true
         }
 
         return locationPermission && activityRecognitionPermission
     }
 
-    // Zahtijeva dopuštenja za pristup fizičkoj aktivnosti i lokaciji korisnika u runtime-u.
+    // Zahtijeva dopuštenja za pristup fizičkoj aktivnosti i lokaciji korisnika u runtime-u
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun requestRuntimePermissions(requestCode: Int) {
         // Check rationale for both location and physical activity permissions
@@ -141,12 +124,11 @@ class MainActivity : AppCompatActivity() {
                 Manifest.permission.ACTIVITY_RECOGNITION
             )
 
-        // Ako je bilo koje od dopuštenja prije odbijeno prikazuje se obrazloženje kao Snackbar
         val shouldProvideRationale = shouldProvideRationaleLocation || shouldProvideRationaleActivity
 
         requestCode.let {
             if (shouldProvideRationale) {
-                Log.i(TAG, "Displaying permission rationale to provide additional context.")
+                Log.i(TAG, "Presenting permission explanation to offer further context.")
                 Snackbar.make(
                     findViewById(android.R.id.content),
                     "Permissions Denied",
@@ -166,10 +148,6 @@ class MainActivity : AppCompatActivity() {
                     .show()
             } else {
                 Log.i(TAG, "Requesting permissions")
-                // Traži obje dozvole.
-                // Moguće je da ovaj zahtjev može biti automatski odgovoren ako su na uređaju postavljene
-                // dozvole u određeno stanju ili je korisnik prethodno odbio dozvole
-                // i označio "Nikada ne pitaj ponovno".
                 ActivityCompat.requestPermissions(
                     this,
                     arrayOf(
@@ -183,41 +161,24 @@ class MainActivity : AppCompatActivity() {
         checkPermissionsAndRun(requestCode)
     }
 
-    // Pretplata na ažuriranja broja koraka koristeći Google Fit API.
+    // Ažuriranja broja koraka koristeći Google Fit API
     private fun subscribeToSteps() {
         val recordingClient = Fitness.getRecordingClient(this, getGoogleAccount())
         recordingClient.subscribe(DataType.TYPE_STEP_COUNT_DELTA)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Log.i(TAG, "Successfully subscribed to step count updates!")
+                    Log.i(TAG, "You have successfully subscribed to receive step count updates!!")
                 } else {
                     Log.w(
                         TAG,
-                        "There was a problem subscribing to step count updates.",
+                        "An issue occurred while attempting to subscribe to step count updates.",
                         task.exception
                     )
                 }
             }
     }
 
-    // Pretplata na ažuriranja potrošenih kalorija koristeći Google Fit API.
-    private fun subscribeToCalories() {
-        val recordingClient = Fitness.getRecordingClient(this, getGoogleAccount())
-        recordingClient.subscribe(DataType.TYPE_CALORIES_EXPENDED)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Log.i(TAG, "Successfully subscribed to calorie updates!")
-                } else {
-                    Log.w(
-                        TAG,
-                        "There was a problem subscribing to calorie updates.",
-                        task.exception
-                    )
-                }
-            }
-    }
-
-    // Ova metoda se poziva kada aplikacija dobije odgovor nakon što je postavila zahtjev za dopuštenjima.
+    // Metoda se poziva kada aplikacija dobije odgovor nakon što je postavila zahtjev za dopuštenje
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -225,12 +186,11 @@ class MainActivity : AppCompatActivity() {
             Activity.RESULT_OK -> when (requestCode) {
                 GOOGLE_FIT_PERMISSIONS_REQUEST_CODE -> loadNav_controller()
                 else -> {
-                    // Result wasn't from Google Fit
+
                 }
             }
             else -> {
-                // Permission not granted
-                Toast.makeText(this, "Permission not granted", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Permission deined", Toast.LENGTH_LONG).show()
                 requestPermissions()
             }
         }

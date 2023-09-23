@@ -28,7 +28,7 @@ class Statistics : Fragment() {
     private lateinit var monthlyProgressChart: BarChart
     private lateinit var averageStepsWeekTextView: TextView
     private lateinit var averageStepsMonthTextView: TextView
-    // Inicijalizacija ViewModel-a
+
     private val fitnessViewModel: FitnessViewModel by viewModels()
     private lateinit var rootView: View
 
@@ -40,7 +40,7 @@ class Statistics : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Učitavanje layouta za ovaj fragment
+        // Učitavanje layouta
         rootView = inflater.inflate(R.layout.fragment_statistics, container, false)
         // Inicijalizacija komponenata iz layouta
         averageStepsWeekTextView = rootView.findViewById(R.id.average_steps_week)
@@ -69,44 +69,37 @@ class Statistics : Fragment() {
         progressChart.setDrawGridBackground(false)
 
         // Postavljanje podataka za grafičke skupove
-        val caloriesDataSet = BarDataSet(mutableListOf(), "Calories")
         val stepsDataSet = BarDataSet(mutableListOf(), "Steps")
         stepsDataSet.color = ContextCompat.getColor(rootView.context, R.color.calories)
-        val distanceDataSet = LineDataSet(mutableListOf(), "Distance")
         val objectiveSteps = fitnessViewModel.loadObjectiveSteps(rootView.context).toFloat()
 
         // Punjenje grafičkih skupova podacima
         WeeklyFitness.dailyFitnessList.forEachIndexed { index, fitnessData ->
-            val caloriesEntry = BarEntry(index.toFloat(), fitnessData.caloriesBurned.toFloat())
             val stepsEntry = BarEntry(index.toFloat(), fitnessData.stepCount.toFloat())
-            val distanceEntry = BarEntry(index.toFloat(), fitnessData.distance)
-
-            caloriesDataSet.addEntry(caloriesEntry)
             stepsDataSet.addEntry(stepsEntry)
-            distanceDataSet.addEntry(distanceEntry)
         }
 
         val data = BarData()
-        //data.addDataSet(caloriesDataSet)
+
         data.addDataSet(stepsDataSet)
-        //data.addDataSet(distanceDataSet)
+
 
         progressChart.data = data
 
         // Konfiguracija osi grafa
-        // Set X-axis properties
+
         val xAxis = progressChart.xAxis
         xAxis.position = XAxis.XAxisPosition.BOTTOM
-        //xAxis.labelCount = 7
+
         xAxis.valueFormatter = DayAxisValueFormatter(progressChart)
 
-        // Set Y-axis properties
+
         val yAxisLeft = progressChart.axisLeft
         yAxisLeft.setDrawGridLines(false)
         yAxisLeft.isEnabled = true
         yAxisLeft.axisMinimum = 0f
         // Postavljanje maksimalne vrijednosti y-osi na 110% ciljnog broja koraka
-        yAxisLeft.axisMaximum = (objectiveSteps + (0.1 * objectiveSteps)).toFloat() // Ovdje dodajemo 10% na ciljani broj koraka da bi linija bila jasno vidljiva
+        yAxisLeft.axisMaximum = (objectiveSteps + (0.1 * objectiveSteps)).toFloat()
 
         val yAxisRight = progressChart.axisRight
         yAxisRight.isEnabled = false
@@ -137,43 +130,38 @@ class Statistics : Fragment() {
         monthlyProgressChart.setDrawGridBackground(false)
 
         // Postavljanje podataka za grafičke skupove
-        val caloriesDataSet = BarDataSet(mutableListOf(), "Calories")
         val stepsDataSet = BarDataSet(mutableListOf(), "Steps")
         stepsDataSet.color = ContextCompat.getColor(rootView.context, R.color.calories)
-        val distanceDataSet = LineDataSet(mutableListOf(), "Distance")
         val objectiveSteps = fitnessViewModel.loadObjectiveSteps(rootView.context).toFloat()
 
         // Punjenje grafičkih skupova podacima
         MonthlyFitness.dailyFitnessList.forEachIndexed { index, fitnessData ->
-            val caloriesEntry = BarEntry(index.toFloat(), fitnessData.caloriesBurned.toFloat())
             val stepsEntry = BarEntry(index.toFloat(), fitnessData.stepCount.toFloat())
-            val distanceEntry = BarEntry(index.toFloat(), fitnessData.distance)
 
-            caloriesDataSet.addEntry(caloriesEntry)
             stepsDataSet.addEntry(stepsEntry)
-            distanceDataSet.addEntry(distanceEntry)
+
         }
 
         val data = BarData()
-        //data.addDataSet(caloriesDataSet)
+
         data.addDataSet(stepsDataSet)
-        //data.addDataSet(distanceDataSet)
+
 
         monthlyProgressChart.data = data
 
-        // Konfiguracija osi grafa
-        // Set X-axis properties
+
+
         val xAxis = monthlyProgressChart.xAxis
         xAxis.position = XAxis.XAxisPosition.BOTTOM
 
-        // Set Y-axis properties
+
         val yAxisLeft = monthlyProgressChart.axisLeft
         yAxisLeft.setDrawGridLines(false)
         yAxisLeft.isEnabled = true
         yAxisLeft.axisMinimum = 0f
 
-        // Postavljanje maksimalne vrijednosti y-osi na 110% ciljnog broja koraka
-        yAxisLeft.axisMaximum = (objectiveSteps + (0.1 * objectiveSteps)).toFloat() // Ovdje dodajemo 10% na ciljani broj koraka da bi linija bila jasno vidljiva
+        // Postavljanje maksimalne vrijednosti y-osi
+        yAxisLeft.axisMaximum = (objectiveSteps + (0.1 * objectiveSteps)).toFloat()
         val yAxisRight = monthlyProgressChart.axisRight
         yAxisRight.isEnabled = false
         yAxisLeft.setDrawGridLines(false)
@@ -184,7 +172,7 @@ class Statistics : Fragment() {
         // Dodavanje linije za dnevni cilj
         val targetLine = LimitLine(objectiveSteps, "Dnevni cilj")
         targetLine.lineWidth = 2f
-        targetLine.lineColor = ContextCompat.getColor(requireContext(), R.color.steps) // Promijenite boju prema želji
+        targetLine.lineColor = ContextCompat.getColor(requireContext(), R.color.steps)
         targetLine.labelPosition = LimitLine.LimitLabelPosition.RIGHT_TOP
         targetLine.textSize = 10f
         yAxisLeft.addLimitLine(targetLine)

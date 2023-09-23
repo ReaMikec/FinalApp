@@ -18,7 +18,6 @@ class Setting : Fragment() {
     private lateinit var stepsTextView: TextView
     private lateinit var changeObjButton: Button
 
-    // Instanciranje ViewModel-a za komunikaciju s backend logikom
     private val fitnessViewModel: FitnessViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,7 +39,7 @@ class Setting : Fragment() {
         // Prikaz trenutnog cilja koraka korisnika
         showObjectiveSteps(rootView.context)
 
-        // Postavljanje listenera na gumb koji će pokazati dijalog za promjenu cilja koraka
+        // Postavljanje listenera
         changeObjButton.setOnClickListener{
             showObjectiveDialog(rootView.context)
         }
@@ -53,7 +52,7 @@ class Setting : Fragment() {
         stepsTextView.text = fitnessViewModel.loadObjectiveSteps(context).toString()
     }
 
-    // Metoda koja prikazuje dijalog s NumberPicker-om gdje korisnik može odabrati novi cilj koraka
+    // Metoda koja prikazuje dijalog s NumberPicker-om
     private fun showObjectiveDialog(context: Context) {
 
         // Inflacija custom layouta za dijalog
@@ -75,7 +74,7 @@ class Setting : Fragment() {
             }
         })
 
-        // Postavljanje listenera na "Save" gumb dijaloga za spremanje novog cilja koraka
+        // Postavljanje listenera na "Spremi" gumb dijaloga za spremanje novog cilja koraka
         dialogBuilder.setPositiveButton("Spremi") { _, _ ->
             val newObjectiveSteps = objectiveSeekBar.value * 1000
             fitnessViewModel.saveObjectiveSteps(context, newObjectiveSteps)
@@ -83,7 +82,6 @@ class Setting : Fragment() {
             Toast.makeText(context, "Ciljani broj koraka je spremljen", Toast.LENGTH_SHORT).show()
         }
 
-        // Prikaz dijaloga
         dialogBuilder.create().show()
     }
 

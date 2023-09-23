@@ -1,10 +1,6 @@
 package com.example.fitness.model
 
-// DailyFitnessModel je model podataka koji reprezentira informacije o dnevnim fitnes aktivnostima korisnika,
-// uključujući broj koraka, potrošene kalorije i prijeđenu udaljenost
+// DailyFitnessModel je model podataka koji prikazuje informacije o dnevnim fitnes aktivnostima korisnika
 data class DailyFitnessModel (
-    var stepCount: Int,
-    var caloriesBurned: Int,
-    var distance: Float
-
+    var stepCount: Int
 )

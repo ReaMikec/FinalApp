@@ -17,10 +17,7 @@ import com.example.fitness.viewmodel.FitnessViewModel
 class Home : Fragment() {
 
     // Definiranje varijabli za UI komponente
-    private lateinit var textViewSteps: TextView
     private lateinit var textViewStepsBig: TextView
-    private lateinit var textViewCalories: TextView
-    private lateinit var textViewDistance: TextView
     private lateinit var stepsProgressBar: ProgressBar
     private lateinit var welcomeMessage: TextView
 
@@ -32,7 +29,7 @@ class Home : Fragment() {
     private val refreshRunnable = object : Runnable {
         override fun run() {
             loadDailyFitnessData()
-            handler.postDelayed(this, 1000) // Ponavljanje svake sekunde
+            handler.postDelayed(this, 1000) // Ponavlja se svake sekunde
         }
     }
 
@@ -42,19 +39,17 @@ class Home : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Inflate (postavljanje) layout-a za ovaj fragment
+        // Inflate postavljanje layout-a
         val rootView = inflater.inflate(R.layout.fragment_home, container, false)
         requireContext()
 
         // Povezivanje UI komponenti s varijablama
         welcomeMessage = rootView.findViewById(R.id.welcomeMessage)
-        textViewSteps = rootView.findViewById(R.id.steps)
+
         textViewStepsBig = rootView.findViewById(R.id.steps_big)
-        textViewCalories = rootView.findViewById(R.id.burned_calories)
-        textViewDistance = rootView.findViewById(R.id.distance)
         stepsProgressBar = rootView.findViewById(R.id.stepsProgressBar)
 
-        // Postavljanje maksimalne vrijednosti za ProgressBar koristeći ViewModel
+        // Postavljanje max. vrijednosti za ProgressBar koristeći ViewModel
         stepsProgressBar.max = fitnessViewModel.loadObjectiveSteps(rootView.context)
 
         // Učitavanje podataka o kondiciji za tekući dan
@@ -63,16 +58,16 @@ class Home : Fragment() {
         return rootView
     }
 
-    // Kada fragment postane vidljiv korisniku
+    // Fragment postaje vidljiv korisniku
     override fun onResume() {
         super.onResume()
-        startRefreshing() // Pokreće ponavljajuće ažuriranje podataka
+        startRefreshing() // Pokreće ažuriranje podataka
     }
 
-    // Kada fragment prestane biti vidljiv korisniku
+    // Fragment prestaje biti vidljiv korisniku
     override fun onPause() {
         super.onPause()
-        stopRefreshing() // Zaustavlja ponavljajuće ažuriranje podataka
+        stopRefreshing() // Zaustavlja ažuriranje podataka
     }
 
     // Metoda za pokretanje ponavljajućeg ažuriranja podataka
@@ -88,11 +83,9 @@ class Home : Fragment() {
     // Metoda za učitavanje dnevnih podataka o kondiciji
     private fun loadDailyFitnessData() {
         fitnessViewModel.getDailyFitnessData(requireContext()).observe(viewLifecycleOwner, Observer { DailyFitness->
-            // Ažuriranje UI komponenti s novim podacima
-            textViewSteps.text = DailyFitness.stepCount.toString()
+
+
             textViewStepsBig.text = DailyFitness.stepCount.toString()
-            textViewCalories.text = DailyFitness.caloriesBurned.toString()
-            textViewDistance.text = String.format("%.2f", DailyFitness.distance)
             stepsProgressBar.progress = DailyFitness.stepCount
         })
     }

@@ -8,21 +8,20 @@ import com.example.fitness.model.WeeklyFitnessModel
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 
 
-// Definira interfejs za rad s podacima vezanim uz Googel fit.
+// Definira interface za rad s podacima vezanim uz Googel fit
 interface FitnessRepository {
 
     // Funkcija koja vraća dnevne podatke.
-    // Rezultat je 'MutableLiveData', što znači da se podaci mogu promijeniti i osvježiti u realnom vremenu u UI.
     fun getDailyFitnessData(context: Context): MutableLiveData<DailyFitnessModel>
 
-    // Funkcija koja vraća tjedne podatke o kondiciji.
+    // Funkcija koja vraća tjedne podatke o kondiciji
     fun getWeeklyFitnessData(context: Context): MutableLiveData<WeeklyFitnessModel>
 
-    // Funkcija koja vraća mjesečne podatke o kondiciji.
+    // Funkcija koja vraća mjesečne podatke o kondiciji
     fun getMonthlyFitnessData(context: Context): MutableLiveData<MonthlyFitnessModel>
 
-    // Funkcija koja dohvaća podatke Google računa korisnika. Koristi za autentikaciju ili
-    // povezivanje s Google Fit servisom.
+    // Funkcija koja dohvaća podatke Google računa korisnika
+
     fun getGoogleAccount(context: Context): GoogleSignInAccount
 
 

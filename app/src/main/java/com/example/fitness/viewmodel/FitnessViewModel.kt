@@ -14,9 +14,9 @@ import com.example.fitness.repository.SharedPreferencesRepositoryImpl
 
 class FitnessViewModel: ViewModel() {
 
-    // Instanciranje repozitorija s podacima s google fit-a
+
     val fitnessRepo: FitnessRepository = FitnessRepositoryImpl()
-    // Instanciranje repozitorija koji se bavi SharedPreferences-om (lokalnim spremanjem podataka)
+
     val sharedPreferencesRepo: SharedPreferencesRepository = SharedPreferencesRepositoryImpl()
 
     // Funkcija za dohvaćanje dnevnih podataka o kondiciji
