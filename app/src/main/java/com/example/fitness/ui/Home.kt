@@ -29,7 +29,7 @@ class Home : Fragment() {
     private val refreshRunnable = object : Runnable {
         override fun run() {
             loadDailyFitnessData()
-            handler.postDelayed(this, 1000) // Ponavlja se svake sekunde
+            handler.postDelayed(this, 1000)
         }
     }
 
@@ -52,19 +52,19 @@ class Home : Fragment() {
         // Postavljanje max. vrijednosti za ProgressBar koristeći ViewModel
         stepsProgressBar.max = fitnessViewModel.loadObjectiveSteps(rootView.context)
 
-        // Učitavanje podataka o kondiciji za tekući dan
+
         loadDailyFitnessData()
 
         return rootView
     }
 
-    // Fragment postaje vidljiv korisniku
+
     override fun onResume() {
         super.onResume()
         startRefreshing() // Pokreće ažuriranje podataka
     }
 
-    // Fragment prestaje biti vidljiv korisniku
+
     override fun onPause() {
         super.onPause()
         stopRefreshing() // Zaustavlja ažuriranje podataka
